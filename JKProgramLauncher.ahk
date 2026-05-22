@@ -48,6 +48,8 @@ class JKProgramLauncher
         targetPath := this.GetTargetPath(targetName)
 
         this.RunTargetPath(targetPath, args)
+
+        JKUtility.Log("프로그램 실행 : " targetName)
     }
 
     static RunTargetPath(targetPath, args := "")
@@ -64,4 +66,6 @@ class JKProgramLauncher
 
 ; MARK: 실행 영역
 
+; XXX 테스트용
 ; JKProgramLauncher.RunTarget("notepad")
+; Run("dmmgameplayer://play/GCL/dolwav/cl/win")
