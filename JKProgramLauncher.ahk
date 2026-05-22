@@ -61,6 +61,15 @@ class JKProgramLauncher
             Run('"' targetPath '"')
     }
 
+    ; 이름 배열 받아서 순차적 실행 | 지금은 인수 필요없으니 일단 미작업
+    static RunTargetAry(targetNameAry)
+    {
+        for name in targetNameAry
+        {
+            this.RunTarget(name)
+        }
+    }
+
 }
 
 
