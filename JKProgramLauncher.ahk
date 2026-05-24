@@ -7,6 +7,17 @@
  * @date 2026/05/19
  * @version 0.0.1
  ***********************************************************************/
+; 프로그램 정보 | pathSheetdata
+class ProgramInfo
+{
+    name := ""
+    path := ""
+
+    __New(name := "", path := "") {
+        this.name := name
+        this.path := path
+    }
+}
 
 /**
  * 프로그램 실행 스크립트 베이스
@@ -19,27 +30,47 @@ class JKProgramLauncher
     static PATH_SHEET_NAME := "PathSheet"
 
     ; 별명 : 프로그램 전체 경로 중첩 맵
-    static pathTable := JKUtility.LoadPrioritySheetData(JKUtility.SHEET_FOLDER, this.PATH_SHEET_NAME)
+    static programInfoMap := this.LoadPathSheet(JKUtility.SHEET_FOLDER, this.PATH_SHEET_NAME)
 
     ; 실행할 목표
     static curTargetName := ""
 
     ; MARK: 함수 영역
 
+    ; 프로그램 경로 시트 읽어서 데이터화
+    static LoadPathSheet(sheetFolderPath, sheetName)
+    {
+        sheetData := JKUtility.LoadPrioritySheetData(sheetFolderPath,  sheetName)
+
+        ; 클래스화
+        return JKUtility.MasterMapToClassMap(sheetData, ProgramInfo)
+    }
+
     ; 이름으로 목표 경로 가져오기
     static GetTargetPath(targetName)
     {
-        targetPath := ""
-        for row in this.pathTable
+        try 
         {
-            if(row["name"] = targetName)
+            if(this.programInfoMap.Has(targetName))
             {
-                targetPath := row["path"]
-                break
-            }
-        }
+                /** @type {ProgramInfo} */
+                targetInfo := this.programInfoMap[targetName]
 
-        return targetPath
+                return targetInfo.path
+            }
+            
+            ; Map에 키가 없다면 의도적으로 에러를 발생시켜 catch 블록으로 보냅니다.
+            throw Error("등록되지 않은 프로그램 이름입니다: " . targetName)
+        }
+        catch Error as err 
+        {
+            ; 로그를 남기거나 경고창을 띄워 크래시 없이 상황을 인지합니다.
+            JKUtility.Log(err.Message)
+            MsgBox(err.Message, "경로 로드 실패", "Icon! T2") 
+            
+            ; 크래시를 방지하기 위해 안전하게 빈 값을 반환합니다.
+            return ""
+        }
     }
 
     ; 이름으로 프로그램 실행
@@ -47,6 +78,9 @@ class JKProgramLauncher
     {
         targetPath := this.GetTargetPath(targetName)
 
+        if(targetPath = "")
+            return
+                
         this.RunTargetPath(targetPath, args)
 
         JKUtility.Log("프로그램 실행 : " targetName)

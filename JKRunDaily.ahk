@@ -8,6 +8,20 @@
  * @version 0.0.1
  ***********************************************************************/
 
+; 그룹 데이터
+class RunGroup
+{
+    ; 그룹 이름(키)
+    name := ""
+    ; 그룹 배열 [멤버 string]
+    group := []
+
+    __New(name := "", group := []) {
+        this.name := name
+        this.group := group
+    }
+}
+
 class JKRunDaily extends JKProgramLauncher
 {
     ; 현재 받은 인수 | 실행할때 받아서 분기 처리
@@ -16,30 +30,54 @@ class JKRunDaily extends JKProgramLauncher
     ; 실행 그룹 시트명
     static DAILY_GROUP_SHEEP_NAME := "DailyGroupSheet"
 
-    ; 인수 이름 : 실행 그룹 배열
-    static groupMap := this.LoadDailyGroupSheet(JKUtility.SHEET_FOLDER, this.DAILY_GROUP_SHEEP_NAME)
-    
-    ; 실행 그룹 시트 받아서 실사용 가공
-    static LoadDailyGroupSheet(csvFolderPath, csvFileName)
-    {
-        sheetData := JKUtility.LoadPrioritySheetData(csvFolderPath, csvFileName)
+    /**
+     * #### 그룹 맵 [그룹 이름 key : 그룹 객체]
+     * @type {Map} 
+     * @default null
+     */
+    static groupInsMap := this.LoadDailyGroupData(JKUtility.SHEET_FOLDER, this.DAILY_GROUP_SHEEP_NAME)
 
-        ; csvData의 각 항목을 순회하며 데이터 변환
-        for key, value in sheetData
+    ; MARK: 함수 영역
+    
+    ; 배열 { 맵[헤더] : 값}
+    ; 실행 그룹 시트 받아서 실사용 가공
+    static LoadDailyGroupData(csvFolderPath, csvFileName, keyHeader := "")
+    {
+        sheetDataMap := JKUtility.LoadPrioritySheetData(csvFolderPath, csvFileName, keyHeader)
+
+        ; 데이터내 , string을 배열로 변환
+        JKUtility.ConvertCommaStringToAry(sheetDataMap)
+
+        ; 데이터 맵을 클래스로 변환
+        groupDataIns := JKUtility.MasterMapToClassMap(sheetDataMap, RunGroup)
+
+        return groupDataIns
+    }
+
+    ; 실행 그룹 이름 받아서 해당 그룹 실행
+    static RunTargetGroup(groupName)
+    {
+        ; 그룹 배열 찾기
+        if(this.groupInsMap.Has(groupName))
         {
-            ; 값이 쉼표를 포함하고 있는지 확인
-            if (InStr(value, ","))
+            ; 그룹 멤버 순차 실행
+            /** @type {RunGroup} */
+            oneGroup := this.groupInsMap[groupName]
+            for member in oneGroup.group
             {
-                ; 쉼표가 포함되어 있다면 배열로 변환하여 덮어쓰기
-                sheetData[key] := StrSplit(value, ",")
+                this.RunTarget(member)
             }
         }
-
-        return sheetData
+        else
+            JKUtility.Log("해당 그룹 없음 : " groupName)
     }
 }
 
+
+; @@ 임시 dw 대체
 ; ; jkghk 실행
 ; JKRunDaily.RunTarget("jkghk")
 ; ; 돌핀웨이브 실행
 ; JKRunDaily.RunTarget("dolphinwave")
+
+JKRunDaily.RunTargetGroup("dw")
