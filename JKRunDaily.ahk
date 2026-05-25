@@ -46,7 +46,7 @@ class JKRunDaily extends JKProgramLauncher
         sheetDataMap := JKUtility.LoadPrioritySheetData(csvFolderPath, csvFileName, keyHeader)
 
         ; 데이터내 , string을 배열로 변환
-        JKUtility.ConvertCommaStringToAry(sheetDataMap)
+        sheetDataMap := JKUtility.ConvertCommaStringToAry(sheetDataMap)
 
         ; 데이터 맵을 클래스로 변환
         groupDataIns := JKUtility.MasterMapToClassMap(sheetDataMap, RunGroup)

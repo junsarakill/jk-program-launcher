@@ -8,4 +8,9 @@ class JKUtility Extends JKUtilityBase
     {
         return super.LoadPrioritySheetData(csvFolderPath, csvFileName, keyHeader)
     }
+
+    static ConvertCommaStringToAry(data)
+    {
+        return super.ConvertCommaStringToAry(data)
+    }
 }
