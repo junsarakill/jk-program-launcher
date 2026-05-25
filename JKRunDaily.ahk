@@ -71,13 +71,18 @@ class JKRunDaily extends JKProgramLauncher
         else
             JKUtility.Log("해당 그룹 없음 : " groupName)
     }
+
+    ; 인수(그룹명) 으로 실행
+    static RunWithArgs()
+    {
+        if(A_Args.Length = 0)
+            return
+        
+        this.RunTargetGroup(A_Args[1])
+    }
 }
 
+; MARK: 실행 영역 
 
-; @@ 임시 dw 대체
-; ; jkghk 실행
-; JKRunDaily.RunTarget("jkghk")
-; ; 돌핀웨이브 실행
-; JKRunDaily.RunTarget("dolphinwave")
-
-JKRunDaily.RunTargetGroup("dw")
+; 인수 처리
+JKRunDaily.RunWithArgs()

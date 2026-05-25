@@ -104,10 +104,19 @@ class JKProgramLauncher
         }
     }
 
+    ; 인수 받아서 처리
+    static RunWithArgs()
+    {
+        ; 실제 내용은 각 파일이 상속 받아서 구현
+        JKUtility.Log(A_Args.Length)
+    }
+
 }
 
 
 ; MARK: 실행 영역
+
+; JKProgramLauncher.RunWithArgs()
 
 ; XXX 테스트용
 ; JKProgramLauncher.RunTarget("notepad")
