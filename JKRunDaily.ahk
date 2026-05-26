@@ -16,7 +16,8 @@ class RunGroup
     ; 그룹 배열 [멤버 string]
     group := []
 
-    __New(name := "", group := []) {
+    __New(name := "", group := []) 
+    {
         this.name := name
         this.group := group
     }
@@ -24,16 +25,19 @@ class RunGroup
 
 class JKRunDaily extends JKProgramLauncher
 {
-    ; 현재 받은 인수 | 실행할때 받아서 분기 처리
-    static curArgs := ""
-
-    ; 실행 그룹 시트명
-    static DAILY_GROUP_SHEEP_NAME := "DailyGroupSheet"
+    /**
+     * #### 실행 그룹 시트명
+     * @type {String} 
+     * @readonly
+     * @default null
+     */
+    static DAILY_GROUP_SHEEP_NAME => "DailyGroupSheet"
 
     /**
      * #### 그룹 맵 [그룹 이름 key : 그룹 객체]
      * @type {Map} 
-     * @default null
+     * @see RunGroup
+     * @default Map[key:RunGroup()]
      */
     static groupInsMap := this.LoadDailyGroupData(JKUtility.SHEET_FOLDER, this.DAILY_GROUP_SHEEP_NAME)
 
@@ -41,8 +45,18 @@ class JKRunDaily extends JKProgramLauncher
     
     ; 배열 { 맵[헤더] : 값}
     ; 실행 그룹 시트 받아서 실사용 가공
+    /**
+     * #### 실행 그룹 시트 받아서 실사용 맵{키:클래스} 로 가공
+     * *
+     * @see RunGroup
+     * @param {String} csvFolderPath - 시트 폴더 경로
+     * @param {String} csvFileName - 시트 파일 이름
+     * @param {String} keyHeader - 객체를 찾을 키로 할 시트 헤더 이름
+     * @returns {Map} - Map[key:RunGroup()]
+     */
     static LoadDailyGroupData(csvFolderPath, csvFileName, keyHeader := "")
     {
+        /** @type {Map} */
         sheetDataMap := JKUtility.LoadPrioritySheetData(csvFolderPath, csvFileName, keyHeader)
 
         ; 데이터내 , string을 배열로 변환
@@ -54,10 +68,14 @@ class JKRunDaily extends JKProgramLauncher
         return groupDataIns
     }
 
-    ; 실행 그룹 이름 받아서 해당 그룹 실행
+    /**
+     * #### 실행 그룹 이름 받아서 해당 그룹 실행
+     * *
+     * @param {String} groupName - 그룹 이름
+     */
     static RunTargetGroup(groupName)
     {
-        ; 그룹 배열 찾기
+        ; 그룹 존재 확인
         if(this.groupInsMap.Has(groupName))
         {
             ; 그룹 멤버 순차 실행
@@ -72,7 +90,10 @@ class JKRunDaily extends JKProgramLauncher
             JKUtility.Log("해당 그룹 없음 : " groupName)
     }
 
-    ; 인수(그룹명) 으로 실행
+    /**
+     * #### 인수(그룹명) 으로 실행
+     * *
+     */
     static RunWithArgs()
     {
         if(A_Args.Length = 0)

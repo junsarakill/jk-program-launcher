@@ -27,26 +27,40 @@ class JKProgramLauncher
     ; MARK: 변수 영역
 
     ; 프로그램 경로 시트명
-    static PATH_SHEET_NAME := "PathSheet"
+    static PATH_SHEET_NAME => "PathSheet"
 
-    ; 별명 : 프로그램 전체 경로 중첩 맵
+    /**
+     * #### 이름 : 프로그램 정보 맵
+     * @type {Map} 
+     * @see ProgramInfo
+     * @default Map[name:ProgramInfo()]
+     */
     static programInfoMap := this.LoadPathSheet(JKUtility.SHEET_FOLDER, this.PATH_SHEET_NAME)
-
-    ; 실행할 목표
-    static curTargetName := ""
 
     ; MARK: 함수 영역
 
-    ; 프로그램 경로 시트 읽어서 데이터화
+    /**
+     * #### 프로그램 경로 시트 읽어서 클래스화
+     * *
+     * @param {String} sheetFolderPath - 경로 시트의 경로
+     * @param {String} sheetName - 경로 시트의 이름
+     * @see ProgramInfo
+     * @returns {Map} - Map[name:ProgramInfo()]
+     */
     static LoadPathSheet(sheetFolderPath, sheetName)
     {
-        sheetData := JKUtility.LoadPrioritySheetData(sheetFolderPath,  sheetName)
+        sheetData := JKUtility.LoadPrioritySheetData(sheetFolderPath, sheetName)
 
         ; 클래스화
         return JKUtility.MasterMapToClassMap(sheetData, ProgramInfo)
     }
 
-    ; 이름으로 목표 경로 가져오기
+    /**
+     * #### 이름으로 목표 경로 가져오기
+     * *
+     * @param {String} targetName - 목표 이름
+     * @returns {String} - 목표 경로
+     */
     static GetTargetPath(targetName)
     {
         try 
@@ -74,10 +88,16 @@ class JKProgramLauncher
     }
 
     ; 이름으로 프로그램 실행
+    /**
+     * #### 이름으로 프로그램 실행
+     * *
+     * @param {String} targetName - 목표 이름
+     * @param {String} args - 실행 인수
+     */
     static RunTarget(targetName, args := "")
     {
+        /** @type {String} */
         targetPath := this.GetTargetPath(targetName)
-
         if(targetPath = "")
             return
                 
@@ -86,6 +106,12 @@ class JKProgramLauncher
         JKUtility.Log("프로그램 실행 : " targetName)
     }
 
+    /**
+     * #### 경로로 프로그램 실행
+     * *
+     * @param {String} targetPath - 목표 경로
+     * @param {String} args - 실행 인수
+     */
     static RunTargetPath(targetPath, args := "")
     {
         ; 경로 좌우에 자동으로 큰따옴표를 붙여서 Run에 전달
@@ -95,7 +121,12 @@ class JKProgramLauncher
             Run('"' targetPath '"')
     }
 
-    ; 이름 배열 받아서 순차적 실행 | 지금은 인수 필요없으니 일단 미작업
+    /**
+     * #### 이름 배열 받아서 순차적 실행
+     * *
+     * 지금은 인수 필요없으니 일단 미작업
+     * @param {Array} targetNameAry - 이름 배열
+     */
     static RunTargetAry(targetNameAry)
     {
         for name in targetNameAry
@@ -115,9 +146,8 @@ class JKProgramLauncher
 
 
 ; MARK: 실행 영역
-
+; XXX 테스트용
 ; JKProgramLauncher.RunWithArgs()
 
-; XXX 테스트용
 ; JKProgramLauncher.RunTarget("notepad")
 ; Run("dmmgameplayer://play/GCL/dolwav/cl/win")
