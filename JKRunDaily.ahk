@@ -93,6 +93,8 @@ class JKRunDaily extends JKProgramLauncher
     /**
      * #### 인수(그룹명) 으로 실행
      * *
+     * ;@@ 그룹 안에 또 그룹이 있어서 재귀로 다 처리 하면 좋겠다.
+     * 그러면 csv에 적을 때, all 같은 것도 그룹 두 개 적어서 재사용 되잖아?
      */
     static RunWithArgs()
     {

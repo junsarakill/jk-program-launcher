@@ -115,10 +115,12 @@ class JKProgramLauncher
     static RunTargetPath(targetPath, args := "")
     {
         ; 경로 좌우에 자동으로 큰따옴표를 붙여서 Run에 전달
-        if (args != "")
+        if(args != "")
             Run('"' targetPath '" ' args)
         else
             Run('"' targetPath '"')
+
+        Sleep(50)
     }
 
     /**
