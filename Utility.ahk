@@ -4,8 +4,13 @@
 
 class JKUtility Extends JKUtilityBase
 {
-    static LoadPrioritySheetData(csvFolderPath, csvFileName)
+    static LoadPrioritySheetData(csvFolderPath, csvFileName, keyHeader := "")
     {
-        return super.LoadPrioritySheetData(csvFolderPath, csvFileName)
+        return super.LoadPrioritySheetData(csvFolderPath, csvFileName, keyHeader)
+    }
+
+    static ConvertCommaStringToAry(data)
+    {
+        return super.ConvertCommaStringToAry(data)
     }
 }

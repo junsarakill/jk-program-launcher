@@ -1,3 +1,5 @@
 *.code-workspace
+*.lnk
 PathSheet.csv
 /oldFiles/
+*.csv
