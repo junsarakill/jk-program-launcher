@@ -4,18 +4,20 @@
 /************************************************************************
  * @description 프로그램 실행용
  * @author JKAKK
- * @date 2026/05/19
- * @version 0.0.1
+ * @date 2026/11/03
+ * @version 0.0.2
  ***********************************************************************/
 ; 프로그램 정보 | pathSheetdata
 class ProgramInfo
 {
     name := ""
     path := ""
+    args := ""
 
-    __New(name := "", path := "") {
+    __New(name := "", path := "", args := "") {
         this.name := name
         this.path := path
+        this.args := args
     }
 }
 
@@ -56,10 +58,10 @@ class JKProgramLauncher
     }
 
     /**
-     * #### 이름으로 목표 경로 가져오기
+     * #### 이름으로 목표 실행 정보 가져오기
      * *
      * @param {String} targetName - 목표 이름
-     * @returns {String} - 목표 경로
+     * @returns {ProgramInfo} - 목표 실행 정보
      */
     static GetTargetPath(targetName)
     {
@@ -70,7 +72,7 @@ class JKProgramLauncher
                 /** @type {ProgramInfo} */
                 targetInfo := this.programInfoMap[targetName]
 
-                return targetInfo.path
+                return targetInfo
             }
             
             ; Map에 키가 없다면 의도적으로 에러를 발생시켜 catch 블록으로 보냅니다.
@@ -83,50 +85,46 @@ class JKProgramLauncher
             MsgBox(err.Message, "경로 로드 실패", "Icon! T2") 
             
             ; 크래시를 방지하기 위해 안전하게 빈 값을 반환합니다.
-            return ""
+            return targetInfo()
         }
     }
 
-    ; 이름으로 프로그램 실행
     /**
      * #### 이름으로 프로그램 실행
-     * *
+     * @description 이름 받아서 시트 데이터에 실행 데이터 조회
      * @param {String} targetName - 목표 이름
-     * @param {String} args - 실행 인수
      */
-    static RunTarget(targetName, args := "")
+    static RunTarget(targetName)
     {
-        /** @type {String} */
-        targetPath := this.GetTargetPath(targetName)
-        if(targetPath = "")
+        /** @type {ProgramInfo} */
+        targetInfo := this.GetTargetPath(targetName)
+        if(!targetInfo.path)
+        {
+            JKUtility.Log("경로 없음")
             return
-                
-        this.RunTargetPath(targetPath, args)
-
-        JKUtility.Log("프로그램 실행 : " targetName)
+        }
+        
+        this.RunTargetInfo(targetInfo)
     }
 
     /**
      * #### 경로로 프로그램 실행
-     * *
-     * @param {String} targetPath - 목표 경로
-     * @param {String} args - 실행 인수
+     * @param {ProgramInfo} targetInfo - 프로그램 실행 정보
      */
-    static RunTargetPath(targetPath, args := "")
+    static RunTargetInfo(targetInfo)
     {
         ; 경로 좌우에 자동으로 큰따옴표를 붙여서 Run에 전달
-        if(args != "")
-            Run('"' targetPath '" ' args)
+        if(targetInfo.args != "")
+            Run('"' targetInfo.path '" "' targetInfo.args '"')
         else
-            Run('"' targetPath '"')
+            Run('"' targetInfo.path '"')
 
+        JKUtility.Log("프로그램 실행 : " targetInfo.name)
         Sleep(50)
     }
 
     /**
      * #### 이름 배열 받아서 순차적 실행
-     * *
-     * 지금은 인수 필요없으니 일단 미작업
      * @param {Array} targetNameAry - 이름 배열
      */
     static RunTargetAry(targetNameAry)
